@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>WakeUp Challenge - Cognitive Anti-Snooze Brain Alarm</title>
+  <meta name="description" content="Anti-Snooze alarm application for students. Engage your brain with cognitive missions before disarming the siren.">
+  <meta name="theme-color" content="#090c15">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⏰</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="manifest" href="manifest.json">
+</head>
+<body class="theme-dark">
+  <!-- Desktop / Demo Utility Bar (Sticky top bar for easy evaluation) -->
+  <header class="demo-controls-bar">
+    <div class="demo-brand">
+      <div class="brand-cube-icon">
+        <span class="cube-layer c1"></span>
+        <span class="cube-layer c2"></span>
+      </div>
+      <div class="brand-title-wrap">
+        <span class="brand-name">WakeUp</span>
+        <span class="brand-sub">CHALLENGE</span>
+      </div>
+      <span class="demo-pill">Anti-Snooze v2.4</span>
+    </div>
+    <div class="demo-actions">
+      <button id="btn-quick-alarm" class="btn-demo-trigger" title="Trigger an alarm in 3 seconds to test">
+        <span class="pulse-dot"></span> Test Alarm in 3s
+      </button>
+      <button id="btn-sound-mute-toggle" class="btn-icon-control" title="Mute/Unmute Audio Engine">
+        <span id="sound-mute-icon">🔊</span>
+      </button>
+      <button id="btn-theme-toggle" class="btn-icon-control" title="Toggle Light / Dark theme">
+        <span id="theme-icon">🌙</span>
+      </button>
+      <button id="btn-frame-toggle" class="btn-icon-control" title="Toggle Mobile Mockup Frame">
+        <span id="frame-icon">📱</span>
+        <span class="btn-label-text">Frame</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Viewport Container -->
+  <main class="app-viewport-wrapper">
+    <div class="mobile-device-frame" id="device-frame">
+      <!-- Phone Bezel & Hardware Notch -->
+      <div class="device-notch">
+        <div class="notch-speaker"></div>
+        <div class="notch-camera"></div>
+      </div>
+      
+      <!-- Native Mobile Status Bar -->
+      <div class="device-status-bar">
+        <span class="status-time" id="status-bar-time">07:00</span>
+        <div class="status-icons">
+          <span class="icon-signal">●●●●</span>
+          <span class="icon-wifi">📶</span>
+          <span class="icon-battery">🔋 98%</span>
+        </div>
+      </div>
+
+      <!-- App Screen Scrollable Area -->
+      <div class="app-screen-scroll-container" id="app-screen-container">
+
+        <!-- ==============================================================
+             TAB 1: ALARMS DASHBOARD (Screenshot 4 Reference)
+             ============================================================== -->
+        <section id="view-dashboard" class="app-view active">
+          <!-- Top App Header -->
+          <div class="app-header-row">
+            <div class="app-brand-lockup">
+              <div class="brand-logo-gem">
+                <span class="gem-cube"></span>
+              </div>
+              <div class="brand-text">
+                <span class="brand-top">WakeUp</span>
+                <span class="brand-btm">CHALLENGE</span>
+              </div>
+            </div>
+            <div class="header-right-tools">
+              <div class="streak-pill-header" id="header-streak-pill" title="Current Active Streak">
+                <span class="flame-ico">🔥</span>
+                <span class="streak-days-num" id="header-streak-days">7d</span>
+              </div>
+              <button class="profile-avatar-btn" id="btn-profile-avatar" title="Student Profile">
+                <span class="avatar-icon">👤</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Welcome Card -->
+          <div class="welcome-card">
+            <div class="welcome-left">
+              <h2 class="welcome-heading">Good Morning <span class="wave-hand">👋</span></h2>
+              <p class="welcome-sub" id="welcome-sub-date">Wednesday, Oct 24 • Ready to conquer exams?</p>
+            </div>
+            <div class="welcome-sync-box">
+              <span class="sync-time" id="dash-live-time">11:54<small>AM</small></span>
+              <span class="sync-label"><span class="dot-online"></span> LOCAL SYNC</span>
+            </div>
+          </div>
+
+          <!-- Hero Next Alarm Card (Exact visual from Screenshot 4) -->
+          <div class="hero-alarm-card" id="hero-alarm-card">
+            <div class="card-ambient-glow"></div>
+            
+            <div class="hero-alarm-top-row">
+              <div class="anti-snooze-pill-active" id="hero-antisnooze-badge">
+                <span class="lock-icon">🔒</span>
+                <span>ANTI-SNOOZE ACTIVE</span>
+              </div>
+              <label class="toggle-switch-ios" title="Toggle Next Alarm Active State">
+                <input type="checkbox" id="hero-alarm-toggle" checked>
+                <span class="slider-ios"></span>
+              </label>
+            </div>
+
+            <div class="hero-time-row">
+              <div class="time-digits-group">
+                <span class="hero-digits" id="hero-alarm-digits">07:00</span>
+                <span class="hero-ampm-pill" id="hero-alarm-ampm">AM</span>
+              </div>
+              <div class="hero-countdown-pill" id="hero-countdown-pill">
+                <span class="bolt-icon">⚡</span>
+                <span id="hero-time-diff-text">in 15m</span>
+              </div>
+            </div>
+
+            <div class="hero-meta-row">
+              <div class="hero-mission-title">
+                <span class="mortarboard-icon">🎓</span>
+                <span id="hero-alarm-label">School — Physics 101</span>
+              </div>
+              <div class="hero-sound-tag">
+                <span class="sound-eq-icon">🎚️</span>
+                <span class="sound-bolt">⚡</span>
+                <span id="hero-sound-name">Cyber Echo</span>
+              </div>
+            </div>
+
+            <!-- Days of Week Row -->
+            <div class="days-capsules-row" id="hero-days-row">
+              <div class="day-cap active"><span>M</span><span class="cap-dot"></span></div>
+              <div class="day-cap active"><span>T</span><span class="cap-dot"></span></div>
+              <div class="day-cap active"><span>W</span><span class="cap-dot"></span></div>
+              <div class="day-cap active"><span>T</span><span class="cap-dot"></span></div>
+              <div class="day-cap active"><span>F</span><span class="cap-dot"></span></div>
+              <div class="day-cap"><span>S</span><span class="cap-dot"></span></div>
+              <div class="day-cap"><span>S</span><span class="cap-dot"></span></div>
+            </div>
+
+            <!-- Nested Required Mission Box -->
+            <div class="hero-nested-mission-box" id="hero-nested-mission-box">
+              <div class="mission-box-left">
+                <div class="mission-brain-icon">🧠</div>
+                <div class="mission-box-details">
+                  <span class="mission-box-label">REQUIRED MISSION</span>
+                  <span class="mission-box-name" id="hero-mission-name">Sequence Memory</span>
+                </div>
+              </div>
+              <span class="difficulty-pill-tag" id="hero-difficulty-tag">Med</span>
+            </div>
+
+            <!-- Hero Action: Quick Test Trigger -->
+            <button class="btn-hero-test-trigger" id="btn-trigger-hero-now">
+              <span class="bell-glow">🔔</span>
+              <span>Test This Alarm Now</span>
+            </button>
+          </div>
+
+          <!-- Smart Difficulty Card (From Screenshot 4) -->
+          <div class="smart-difficulty-card">
+            <div class="smart-diff-header">
+              <div class="smart-diff-left">
+                <div class="sliders-icon-box">
+                  <span class="sliders-ico">🎛️</span>
+                </div>
+                <div class="smart-diff-info">
+                  <div class="smart-title-row">
+                    <span class="smart-title">Smart Difficulty</span>
+                    <span class="smart-lvl-badge" id="smart-level-badge">LVL 3</span>
+                  </div>
+                  <p class="smart-subtitle" id="smart-diff-sub">Auto-adaptive based on 1.4s response velocity</p>
+                </div>
+              </div>
+            </div>
+            <div class="smart-progress-track">
+              <div class="smart-progress-fill" id="smart-diff-bar" style="width: 72%;"></div>
+            </div>
+          </div>
+
+          <!-- 3 Stat Metrics Cards (From Screenshot 4) -->
+          <div class="stat-metrics-row">
+            <!-- Metric 1: Streak -->
+            <div class="metric-capsule-card">
+              <div class="metric-top-badge badge-coral">
+                <span class="badge-ico">🔥</span>
+                <span>TOP 5%</span>
+              </div>
+              <div class="metric-big-num">
+                <span class="num-main" id="dash-streak-metric">7</span><span class="num-unit">d</span>
+              </div>
+              <span class="metric-sub-label">Active Streak</span>
+            </div>
+
+            <!-- Metric 2: Missions Done -->
+            <div class="metric-capsule-card">
+              <div class="metric-top-badge badge-purple">
+                <span class="badge-ico">🤖</span>
+                <span>SOLVED</span>
+              </div>
+              <div class="metric-big-num">
+                <span class="num-main" id="dash-solved-metric">24</span>
+              </div>
+              <span class="metric-sub-label">Missions Done</span>
+            </div>
+
+            <!-- Metric 3: Avg Awakening -->
+            <div class="metric-capsule-card">
+              <div class="metric-top-badge badge-cyan">
+                <span class="badge-ico">⭐</span>
+                <span>SPEED</span>
+              </div>
+              <div class="metric-big-num">
+                <span class="num-main" id="dash-speed-metric">4.6</span>
+              </div>
+              <span class="metric-sub-label">Avg Awakening</span>
+            </div>
+          </div>
+
+          <!-- Upcoming Alarms Section (From Screenshot 4) -->
+          <div class="alarms-section-wrapper">
+            <div class="alarms-section-header">
+              <h3 class="section-title-uppercase">UPCOMING ALARMS</h3>
+              <button class="btn-link-view-all" id="btn-view-all-alarms">View All (3)</button>
+            </div>
+            <div class="alarms-compact-list" id="alarms-compact-list">
+              <!-- Dynamically populated alarm cards -->
+            </div>
+          </div>
+
+          <!-- Big Sticky Set Alarm Button -->
+          <div class="set-alarm-btn-wrapper">
+            <button class="btn-vibrant-set-alarm" id="btn-open-create-alarm">
+              <span class="plus-circle-ico">⊕</span>
+              <span class="btn-text-bold">Set Alarm +</span>
+            </button>
+          </div>
+
+          <div class="bottom-nav-spacer"></div>
+        </section>
+
+        <!-- ==============================================================
+             TAB 2: GAMES LIBRARY & RATINGS (Sections 4-9 & 11)
+             ============================================================== -->
+        <section id="view-games" class="app-view">
+          <div class="view-header-telemetry">
+            <div class="telemetry-live-badge">
+              <span class="live-dot-pulse"></span>
+              <span>COGNITIVE GAME MATRIX</span>
+            </div>
+            <div class="view-title-row">
+              <div>
+                <h1 class="view-main-title">Brain Missions</h1>
+                <p class="view-main-subtitle">Interactive puzzle challenges to disarm anti-snooze</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Games List with Community Ratings and Playable Practice Mode -->
+          <div class="games-matrix-list" id="games-matrix-list">
+            <!-- Dynamically populated or rendered -->
+          </div>
+
+          <!-- Student Insights Card -->
+          <div class="student-insights-card">
+            <div class="insights-header">
+              <span class="bulb-icon">💡</span>
+              <h4>Student Awakening Science</h4>
+            </div>
+            <div class="insight-bullet-item">
+              <span class="bullet-dot cyan"></span>
+              <p><strong>Maze Escape</strong> stimulates the spatial parietal lobe, breaking sleep inertia 3x faster than standard buzzer rings.</p>
+            </div>
+            <div class="insight-bullet-item">
+              <span class="bullet-dot purple"></span>
+              <p><strong>Sequence Memory</strong> triggers the prefrontal cortex, locking in alertness for morning lectures.</p>
+            </div>
+            <div class="insight-bullet-item">
+              <span class="bullet-dot orange"></span>
+              <p><strong>Anti-Snooze Mode</strong> eliminates repetitive 9-minute grogginess cycles and protects REM stability.</p>
+            </div>
+          </div>
+
+          <div class="bottom-nav-spacer"></div>
+        </section>
+
+        <!-- ==============================================================
+             TAB 3: TELEMETRY & STATS (Screenshot 1 Reference)
+             ============================================================== -->
+        <section id="view-stats" class="app-view">
+          <!-- Telemetry Header -->
+          <div class="view-header-telemetry">
+            <div class="telemetry-live-badge">
+              <span class="live-dot-pulse"></span>
+              <span>TELEMETRY V2.4 LIVE</span>
+            </div>
+            <div class="view-title-row">
+              <div>
+                <h1 class="view-main-title">Your Wake-Up Stats</h1>
+                <p class="view-main-subtitle">Cognitive Awakening & Streak Intelligence</p>
+              </div>
+              <button class="btn-share-stats" id="btn-share-stats" title="Share Wake-up Stats">
+                <span class="share-icon">📤</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Filter Pills: 7 Days / 30 Days / All-Time -->
+          <div class="filter-pills-row">
+            <button class="pill-filter-btn active" data-range="7d">7 Days</button>
+            <button class="pill-filter-btn" data-range="30d">30 Days</button>
+            <button class="pill-filter-btn" data-range="all">All-Time</button>
+          </div>
+
+          <!-- Streak Metric Double Cards (From Screenshot 1) -->
+          <div class="streak-double-cards-grid">
+            <!-- Card 1: Current Streak -->
+            <div class="streak-stat-box">
+              <div class="stat-box-top">
+                <span class="stat-box-ico flame-glow">🔥</span>
+                <span class="badge-mini-wk">+2d wk</span>
+              </div>
+              <div class="stat-big-streak">
+                <span class="streak-digits" id="stats-current-streak-val">7</span><span class="streak-letter coral">d</span>
+              </div>
+              <div class="stat-box-labels">
+                <span class="stat-label-primary">Current Streak</span>
+                <span class="stat-label-secondary">Top 5% campus rank</span>
+              </div>
+            </div>
+
+            <!-- Card 2: Best Streak -->
+            <div class="streak-stat-box">
+              <div class="stat-box-top">
+                <span class="stat-box-ico trophy-glow">🏆</span>
+                <span class="badge-mini-pb">PB</span>
+              </div>
+              <div class="stat-big-streak">
+                <span class="streak-digits" id="stats-best-streak-val">21</span><span class="streak-letter lavender">d</span>
+              </div>
+              <div class="stat-box-labels">
+                <span class="stat-label-primary">Best Streak</span>
+                <span class="stat-label-secondary">Oct 12 - Nov 02</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cognitive Wake Speed Card (From Screenshot 1) -->
+          <div class="telemetry-card" id="card-wake-speed">
+            <div class="card-telemetry-header">
+              <div>
+                <h3 class="card-telemetry-title">Cognitive Wake Speed</h3>
+                <p class="card-telemetry-subtitle">Reaction acceleration over last 7 alarms (sec)</p>
+              </div>
+              <div class="badge-trend-pill" id="stats-speed-trend-badge">
+                <span class="trend-arrow">↘</span>
+                <span>-50.0%</span>
+              </div>
+            </div>
+
+            <!-- Glowing SVG Curve Graph -->
+            <div class="speed-graph-wrapper">
+              <svg viewBox="0 0 340 120" class="speed-svg-graph" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="speedAreaGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#00f5ff" stop-opacity="0.32" />
+                    <stop offset="50%" stop-color="#8b5cf6" stop-opacity="0.12" />
+                    <stop offset="100%" stop-color="#090c15" stop-opacity="0.0" />
+                  </linearGradient>
+                  <linearGradient id="speedLineGradient" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stop-color="#a855f7" />
+                    <stop offset="35%" stop-color="#00f5ff" />
+                    <stop offset="80%" stop-color="#22d3ee" />
+                    <stop offset="100%" stop-color="#ffffff" />
+                  </linearGradient>
+                  <filter id="neonGlow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="3" result="blur" />
+                    <feMerge>
+                      <feMergeNode in="blur" />
+                      <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                  </filter>
+                </defs>
+                <!-- Area -->
+                <path d="M 15,35 C 55,42 85,55 120,68 C 150,78 175,90 205,92 C 235,95 265,98 295,102 C 315,104 325,105 325,105 L 325,120 L 15,120 Z" fill="url(#speedAreaGradient)"></path>
+                <!-- Glowing Stroke Curve -->
+                <path d="M 15,35 C 55,42 85,55 120,68 C 150,78 175,90 205,92 C 235,95 265,98 295,102 C 315,104 325,105 325,105" fill="none" stroke="url(#speedLineGradient)" stroke-width="3.5" stroke-linecap="round" filter="url(#neonGlow)"></path>
+                <!-- Data Nodes -->
+                <circle cx="15" cy="35" r="4.5" fill="#a855f7" stroke="#ffffff" stroke-width="1.5"></circle>
+                <circle cx="68" cy="46" r="4.5" fill="#a855f7" stroke="#ffffff" stroke-width="1.5"></circle>
+                <circle cx="120" cy="68" r="4.5" fill="#00f5ff" stroke="#ffffff" stroke-width="1.5"></circle>
+                <circle cx="172" cy="89" r="4.5" fill="#00f5ff" stroke="#ffffff" stroke-width="1.5"></circle>
+                <circle cx="225" cy="94" r="4.5" fill="#00f5ff" stroke="#ffffff" stroke-width="1.5"></circle>
+                <circle cx="275" cy="99" r="4.5" fill="#00f5ff" stroke="#ffffff" stroke-width="1.5"></circle>
+                <circle cx="325" cy="105" r="5.5" fill="#ffffff" stroke="#00f5ff" stroke-width="2.5"></circle>
+              </svg>
+
+              <!-- Days & Seconds Scale Below Graph -->
+              <div class="graph-axis-scale">
+                <div class="scale-point"><span>M</span><strong>32s</strong></div>
+                <div class="scale-point"><span>T</span><strong>28s</strong></div>
+                <div class="scale-point"><span>W</span><strong>24s</strong></div>
+                <div class="scale-point"><span>T</span><strong>19s</strong></div>
+                <div class="scale-point"><span>F</span><strong>18s</strong></div>
+                <div class="scale-point"><span>S</span><strong>17s</strong></div>
+                <div class="scale-point active-day"><span class="day-cyan">S</span><strong class="sec-cyan">16s</strong></div>
+              </div>
+            </div>
+
+            <!-- Footer Threshold Notes -->
+            <div class="card-telemetry-footer">
+              <span class="footer-fastest"><span class="dot-cyan"></span> Fastest Mission: Sun (16s)</span>
+              <span class="footer-target">Target threshold: &lt;25s</span>
+            </div>
+          </div>
+
+          <!-- Wake Cadence Precision Card (From Screenshot 1) -->
+          <div class="telemetry-card" id="card-cadence">
+            <div class="cadence-header-row">
+              <div>
+                <h3 class="card-telemetry-title">Wake Cadence Precision</h3>
+                <p class="card-telemetry-subtitle">Target alarm locked: 07:00 AM</p>
+              </div>
+              <!-- Legend: Early, Exact, +Late -->
+              <div class="cadence-legend">
+                <span class="legend-item"><span class="legend-dot cyan"></span> Early</span>
+                <span class="legend-item"><span class="legend-dot purple"></span> Exact</span>
+                <span class="legend-item"><span class="legend-dot orange"></span> +Late</span>
+              </div>
+            </div>
+
+            <!-- 7 Days Bar Chart -->
+            <div class="cadence-bars-grid">
+              <div class="cadence-col">
+                <span class="bar-val-label">7:00</span>
+                <div class="bar-pill-tube"><div class="bar-fill exact" style="height: 94%;"></div></div>
+                <span class="bar-day-name">M</span>
+              </div>
+              <div class="cadence-col">
+                <span class="bar-val-label">6:58</span>
+                <div class="bar-pill-tube"><div class="bar-fill early" style="height: 90%;"></div></div>
+                <span class="bar-day-name">T</span>
+              </div>
+              <div class="cadence-col">
+                <span class="bar-val-label">7:00</span>
+                <div class="bar-pill-tube"><div class="bar-fill exact" style="height: 94%;"></div></div>
+                <span class="bar-day-name">W</span>
+              </div>
+              <div class="cadence-col">
+                <span class="bar-val-label">6:55</span>
+                <div class="bar-pill-tube"><div class="bar-fill early" style="height: 86%;"></div></div>
+                <span class="bar-day-name">T</span>
+              </div>
+              <div class="cadence-col">
+                <span class="bar-val-label">7:00</span>
+                <div class="bar-pill-tube"><div class="bar-fill exact" style="height: 94%;"></div></div>
+                <span class="bar-day-name">F</span>
+              </div>
+              <div class="cadence-col">
+                <span class="bar-val-label late-text">+4m</span>
+                <div class="bar-pill-tube"><div class="bar-fill late" style="height: 60%;"></div></div>
+                <span class="bar-day-name">S</span>
+              </div>
+              <div class="cadence-col">
+                <span class="bar-val-label">6:59</span>
+                <div class="bar-pill-tube"><div class="bar-fill early" style="height: 92%;"></div></div>
+                <span class="bar-day-name">S</span>
+              </div>
+            </div>
+
+            <!-- Circadian Stability Index Footer -->
+            <div class="circadian-badge-box">
+              <div class="circadian-left">
+                <span class="verified-icon">🛡️</span>
+                <span class="circadian-text">Circadian Stability Index</span>
+              </div>
+              <div class="circadian-score">
+                <strong id="circadian-score-val">96.4</strong> <small>/ 100</small>
+              </div>
+            </div>
+          </div>
+
+          <!-- Brain Mission Mastery Card (From Screenshot 1) -->
+          <div class="telemetry-card" id="card-mission-mastery">
+            <div class="card-telemetry-header">
+              <div>
+                <h3 class="card-telemetry-title">Brain Mission Mastery</h3>
+                <p class="card-telemetry-subtitle">Accuracy & reaction across anti-snooze puzzles</p>
+              </div>
+              <div class="domains-count-badge">
+                <span>5 Domains</span>
+              </div>
+            </div>
+
+            <!-- Double Master Bars -->
+            <div class="mastery-bars-group">
+              <div class="mastery-track">
+                <div class="mastery-fill cyan" style="width: 94%;"></div>
+              </div>
+              <div class="mastery-track">
+                <div class="mastery-fill lavender" style="width: 86%;"></div>
+              </div>
+            </div>
+
+            <!-- Individual Game Mastery Row -->
+            <div class="mastery-item-row">
+              <div class="mastery-item-info">
+                <span class="swirl-icon">🌀</span>
+                <span class="mastery-item-name">Maze Escape</span>
+                <span class="lvl-mini-badge">LVL 3</span>
+              </div>
+              <div class="mastery-item-stats">
+                <span class="mastery-pct">89%</span>
+                <span class="mastery-sec">12.8s</span>
+              </div>
+            </div>
+            <div class="mastery-item-track">
+              <div class="mastery-item-fill" style="width: 89%;"></div>
+            </div>
+          </div>
+
+          <div class="bottom-nav-spacer"></div>
+        </section>
+
+        <!-- ==============================================================
+             TAB 4: CAMPUS BADGES & LEADERBOARD
+             ============================================================== -->
+        <section id="view-badges" class="app-view">
+          <div class="view-header-telemetry">
+            <div class="telemetry-live-badge">
+              <span class="live-dot-pulse"></span>
+              <span>CAMPUS DORM RANKING</span>
+            </div>
+            <div class="view-title-row">
+              <div>
+                <h1 class="view-main-title">Achievements</h1>
+                <p class="view-main-subtitle">Top 5% campus riser • Dorm Hall B Rank #14</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- XP & Level Rank Card -->
+          <div class="xp-hero-card">
+            <div class="xp-header-row">
+              <div class="xp-badge-icon">🧠</div>
+              <div class="xp-details">
+                <h3 class="xp-title" id="badges-level-title">Level 5: Brain Awakener</h3>
+                <span class="xp-sub" id="badges-xp-counter">480 / 600 XP to Level 6</span>
+              </div>
+            </div>
+            <div class="xp-track-bar">
+              <div class="xp-bar-fill" id="badges-xp-bar" style="width: 80%;"></div>
+            </div>
+            <div class="xp-perk-hint">
+              <span>⚡ Perks active: Hardcore Anti-Snooze Shield + Adaptive Level 3</span>
+            </div>
+          </div>
+
+          <!-- Badges Grid -->
+          <div class="badges-grid-container" id="badges-grid-container">
+            <!-- Dynamically populated badges -->
+          </div>
+
+          <div class="bottom-nav-spacer"></div>
+        </section>
+
+      </div><!-- End app-screen-scroll-container -->
+
+      <!-- ==============================================================
+           BOTTOM NAVIGATION BAR (4 Tabs: Alarms, Games, Stats, Badges)
+           ============================================================== -->
+      <nav class="app-bottom-nav">
+        <button class="nav-tab active" data-target="view-dashboard" id="tab-nav-alarms">
+          <span class="nav-icon-wrap"><span class="nav-ico">⏰</span></span>
+          <span class="nav-label">Alarms</span>
+        </button>
+        <button class="nav-tab" data-target="view-games" id="tab-nav-games">
+          <span class="nav-icon-wrap"><span class="nav-ico">🎮</span></span>
+          <span class="nav-label">Games</span>
+        </button>
+        <button class="nav-tab" data-target="view-stats" id="tab-nav-stats">
+          <span class="nav-icon-wrap"><span class="nav-ico">📊</span></span>
+          <span class="nav-label">Stats</span>
+        </button>
+        <button class="nav-tab" data-target="view-badges" id="tab-nav-badges">
+          <span class="nav-icon-wrap"><span class="nav-ico">🏆</span></span>
+          <span class="nav-label">Badges</span>
+        </button>
+      </nav>
+
+      <!-- ==============================================================
+           MODAL: SET ALARM (Screenshot 2 Reference)
+           ============================================================== -->
+      <div class="modal-backdrop-layer" id="modal-create-alarm">
+        <div class="modal-bottom-sheet">
+          <!-- Modal Top Bar -->
+          <div class="sheet-header-bar">
+            <button type="button" class="btn-sheet-close" id="btn-close-alarm-modal">✕</button>
+            <div class="sheet-title-brand">
+              <span class="brand-cube-mini"></span>
+              <span class="sheet-title-text">Set Alarm</span>
+            </div>
+            <div class="sheet-header-actions">
+              <button type="button" class="btn-sheet-save-pill" id="btn-sheet-save-top">Save</button>
+              <span class="sheet-profile-avatar">👤</span>
+            </div>
+          </div>
+
+          <!-- Rings in X hours pill -->
+          <div class="sheet-time-until-pill">
+            <span class="clock-cyan-icon">🕒</span>
+            <span id="sheet-rings-countdown-text">Alarm rings in 7h 45m</span>
+          </div>
+
+          <div class="sheet-body-scroll">
+            <form id="form-alarm-setup">
+              <!-- Giant Time Picker Wheels (Screenshot 2) -->
+              <div class="giant-time-picker-card">
+                <!-- Ghost row above -->
+                <div class="time-ghost-row">
+                  <span class="ghost-digit" id="ghost-hour-up">06</span>
+                  <span class="ghost-sep">:</span>
+                  <span class="ghost-digit" id="ghost-min-up">59</span>
+                </div>
+
+                <!-- Main Giant Digits Row -->
+                <div class="time-main-picker-row">
+                  <div class="time-digit-block">
+                    <input type="number" id="input-alarm-hour" class="time-big-input" min="1" max="12" value="7">
+                  </div>
+                  <span class="time-colon-pulse">:</span>
+                  <div class="time-digit-block">
+                    <input type="number" id="input-alarm-minute" class="time-big-input" min="0" max="59" value="00">
+                  </div>
+                  
+                  <!-- AM/PM Stacked Toggle -->
+                  <div class="ampm-stacked-toggle">
+                    <button type="button" class="btn-ampm-opt active" data-period="AM" id="btn-period-am">AM</button>
+                    <button type="button" class="btn-ampm-opt" data-period="PM" id="btn-period-pm">PM</button>
+                  </div>
+                </div>
+
+                <!-- Ghost row below -->
+                <div class="time-ghost-row">
+                  <span class="ghost-digit" id="ghost-hour-down">08</span>
+                  <span class="ghost-sep">:</span>
+                  <span class="ghost-digit" id="ghost-min-down">01</span>
+                </div>
+
+                <!-- Quick Adjust Pills: -15m, +15m, +30m -->
+                <div class="quick-adjust-pills">
+                  <button type="button" class="btn-adjust-pill" data-adjust="-15">-15m</button>
+                  <button type="button" class="btn-adjust-pill" data-adjust="15">+15m</button>
+                  <button type="button" class="btn-adjust-pill" data-adjust="30">+30m</button>
+                </div>
+              </div>
+
+              <!-- Mission Label & Repetition Card -->
+              <div class="sheet-config-card">
+                <div class="config-row-header">
+                  <div class="label-with-icon">
+                    <span class="chevron-tag">Σ</span>
+                    <input type="text" id="input-alarm-label" class="mission-name-input" value="Physics 101 & Sunrise Run" placeholder="Alarm Mission Label">
+                  </div>
+                  <span class="pencil-edit-icon">✏️</span>
+                </div>
+
+                <div class="repetition-subrow">
+                  <span class="repetition-title">Repetition</span>
+                  <span class="repetition-badge" id="repetition-summary-badge">Weekdays (Mon-Fri)</span>
+                </div>
+
+                <div class="days-selector-capsules" id="sheet-days-selector">
+                  <button type="button" class="day-btn active" data-day="Mon"><span>M</span><span class="btn-dot"></span></button>
+                  <button type="button" class="day-btn active" data-day="Tue"><span>T</span><span class="btn-dot"></span></button>
+                  <button type="button" class="day-btn active" data-day="Wed"><span>W</span><span class="btn-dot"></span></button>
+                  <button type="button" class="day-btn active" data-day="Thu"><span>T</span><span class="btn-dot"></span></button>
+                  <button type="button" class="day-btn active" data-day="Fri"><span>F</span><span class="btn-dot"></span></button>
+                  <button type="button" class="day-btn" data-day="Sat"><span>S</span><span class="btn-dot"></span></button>
+                  <button type="button" class="day-btn" data-day="Sun"><span>S</span><span class="btn-dot"></span></button>
+                </div>
+              </div>
+
+              <!-- Required Brain Mission Card (From Screenshot 2) -->
+              <div class="sheet-config-card mission-setup-card">
+                <div class="mission-setup-header">
+                  <div class="mission-header-left">
+                    <div class="mission-purple-sq">🧠</div>
+                    <div>
+                      <h4 class="mission-card-title">Required Brain Mission</h4>
+                      <p class="mission-card-sub">Cognitive anti-snooze disarm task</p>
+                    </div>
+                  </div>
+                  <span class="badge-mandatory">MANDATORY</span>
+                </div>
+
+                <!-- Mission Selector Picker -->
+                <div class="mission-selector-box" id="mission-selector-box">
+                  <div class="mission-sel-left">
+                    <div class="game-sq-icon" id="modal-game-icon">🌀</div>
+                    <div class="game-sel-info">
+                      <div class="game-tag-line">
+                        <span class="fast-wake-tag">Fast Wake</span>
+                      </div>
+                      <select id="select-alarm-mission" class="select-game-dropdown">
+                        <option value="maze" selected>Maze Escape (Gyro Labyrinth)</option>
+                        <option value="sequence">Sequence Memory (Step Recall)</option>
+                        <option value="cards">Card Match (4x4 Neural Pairs)</option>
+                        <option value="pattern">Pattern Recall (Matrix Grid)</option>
+                        <option value="color">Color Memory (Simon Harmonics)</option>
+                        <option value="random">Random Game (Prevents Habituation)</option>
+                      </select>
+                      <p class="game-sub-desc" id="modal-game-desc">Tilt phone through portals</p>
+                    </div>
+                  </div>
+                  <div class="mission-sel-status">
+                    <span class="ready-text">READY</span>
+                    <span class="ready-radio-dot"></span>
+                  </div>
+                </div>
+
+                <!-- Mission Difficulty Segmented -->
+                <div class="difficulty-section">
+                  <div class="diff-header-row">
+                    <span class="diff-label">Mission Difficulty</span>
+                    <span class="diff-adaptive-tag" id="modal-diff-adaptive-tag">Level 03 adaptive</span>
+                  </div>
+                  <div class="diff-segmented-pills">
+                    <button type="button" class="btn-segment-diff" data-diff="easy">Easy</button>
+                    <button type="button" class="btn-segment-diff active" data-diff="medium">Medium</button>
+                    <button type="button" class="btn-segment-diff" data-diff="hard">Extreme</button>
+                  </div>
+                  <div class="diff-sparkle-hint">
+                    <span class="sparkle-ico">✨</span>
+                    <span>Auto-scales complexity based on your 14-day reaction speed.</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Audio & Anti-Snooze Hardcore Lock Card (From Screenshot 2) -->
+              <div class="sheet-config-card">
+                <!-- Hardcore Anti-Snooze Lock -->
+                <div class="toggle-option-item">
+                  <div class="opt-left">
+                    <span class="opt-icon shield">🛡️</span>
+                    <div class="opt-text">
+                      <h4 class="opt-title">Hardcore Anti-Snooze Lock</h4>
+                      <p class="opt-desc">Disables volume buttons, swipe-to-dismiss, and power keys until challenge completes.</p>
+                    </div>
+                  </div>
+                  <label class="toggle-switch-ios">
+                    <input type="checkbox" id="toggle-hardcore-lock" checked>
+                    <span class="slider-ios"></span>
+                  </label>
+                </div>
+
+                <div class="opt-divider"></div>
+
+                <!-- Force Max Escalation & Sound -->
+                <div class="toggle-option-item">
+                  <div class="opt-left">
+                    <span class="opt-icon speaker">🔊</span>
+                    <div class="opt-text">
+                      <h4 class="opt-title">Force Max Escalation</h4>
+                      <p class="opt-desc">Ramps sound to 95dB emergency synth tone after 15s delay.</p>
+                    </div>
+                  </div>
+                  <label class="toggle-switch-ios">
+                    <input type="checkbox" id="toggle-force-escalation" checked>
+                    <span class="slider-ios"></span>
+                  </label>
+                </div>
+
+                <!-- Sound Selector with Preview -->
+                <div class="sound-select-bar">
+                  <div class="sound-dropdown-wrap">
+                    <span class="sound-chip-ico">🎵</span>
+                    <select id="select-alarm-audio-sound" class="sound-dropdown">
+                      <option value="cyber-echo" selected>Cyber Echo (95dB Synth)</option>
+                      <option value="sunrise-melody">Sunrise Melody (Harmonic)</option>
+                      <option value="digital-siren">Digital Siren (Urgent)</option>
+                      <option value="energetic-chime">Energetic Chime (Bright)</option>
+                    </select>
+                  </div>
+                  <button type="button" id="btn-sheet-sound-preview" class="btn-sound-play-preview" title="Preview Audio">
+                    <span id="preview-ico-state">▶️</span>
+                  </button>
+                </div>
+
+                <!-- Animated EQ Visualizer Bars -->
+                <div class="animated-eq-visualizer">
+                  <div class="eq-bar bar-1"></div>
+                  <div class="eq-bar bar-2"></div>
+                  <div class="eq-bar bar-3"></div>
+                  <div class="eq-bar bar-4"></div>
+                  <div class="eq-bar bar-5"></div>
+                  <div class="eq-bar bar-6"></div>
+                  <div class="eq-bar bar-7"></div>
+                  <div class="eq-bar bar-8"></div>
+                </div>
+
+                <!-- Warning Banner -->
+                <div class="emergency-warning-banner">
+                  <span class="warn-triangle">⚠️</span>
+                  <span>Emergency Snooze penalty: <strong>-50 XP</strong> & immediate reset of your <strong>7-Day Streak</strong>.</span>
+                </div>
+              </div>
+
+              <!-- Sticky Bottom Save Action -->
+              <div class="sheet-save-action-wrap">
+                <button type="submit" class="btn-sheet-save-main" id="btn-save-alarm-submit">
+                  <span class="bolt-ico">⚡</span>
+                  <span>Save Alarm (SYNCHRONIZED!)</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==============================================================
+           SCREEN 3: ACTIVE ALARM RINGING SCREEN (Screenshot 5 Reference)
+           ============================================================== -->
+      <div class="alarm-ringing-fullscreen" id="screen-alarm-ringing">
+        <!-- Anti-Snooze Banner Top -->
+        <div class="ringing-top-banner">
+          <div class="banner-left">
+            <span class="lock-cyan-ico">🔒</span>
+            <div class="banner-text">
+              <strong class="banner-title">ANTI-SNOOZE LOCK ACTIVE</strong>
+              <span class="banner-sub">Regular snooze & dismissal locked out</span>
+            </div>
+          </div>
+          <div class="banner-right">
+            <span class="dot-cyan-pill"></span>
+            <span class="lock-pct-text">100%</span>
+          </div>
+        </div>
+
+        <!-- Pulsating Alarm Bell Glow Visual -->
+        <div class="ringing-bell-centerpiece">
+          <div class="soundwave-bars-left">
+            <span class="wave-v w1"></span>
+            <span class="wave-v w2"></span>
+            <span class="wave-v w3"></span>
+          </div>
+
+          <div class="pulsing-rings-halo">
+            <div class="ring-ambient ring-a1"></div>
+            <div class="ring-ambient ring-a2"></div>
+            <div class="ring-ambient ring-a3"></div>
+            <div class="bell-center-circle">
+              <span class="bell-svg-icon">⏰</span>
+            </div>
+          </div>
+
+          <div class="soundwave-bars-right">
+            <span class="wave-v w3"></span>
+            <span class="wave-v w2"></span>
+            <span class="wave-v w1"></span>
+          </div>
+        </div>
+
+        <!-- Giant Time & Greeting -->
+        <div class="ringing-time-group">
+          <div class="ringing-digits-row">
+            <span class="digits-white" id="ringing-digits">7:00</span>
+            <span class="ampm-cyan" id="ringing-ampm">AM</span>
+          </div>
+          <h2 class="ringing-headline">Good Morning, Alex! ☀️</h2>
+          <p class="ringing-subline">Complete the cognitive challenge to deactivate siren.</p>
+        </div>
+
+        <!-- Siren Output Meter (From Screenshot 5) -->
+        <div class="siren-output-card">
+          <div class="siren-output-header">
+            <div class="siren-label">
+              <span class="speaker-ico">🔊</span>
+              <span>SIREN OUTPUT</span>
+            </div>
+            <div class="siren-db-pill">
+              <span>90 dB • MAXIMUM</span>
+            </div>
+          </div>
+          <!-- 10 Colored Meter Dots -->
+          <div class="siren-dots-scale">
+            <span class="s-dot dot-dark"></span>
+            <span class="s-dot dot-dark"></span>
+            <span class="s-dot dot-dark"></span>
+            <span class="s-dot dot-cyan"></span>
+            <span class="s-dot dot-teal"></span>
+            <span class="s-dot dot-lilac"></span>
+            <span class="s-dot dot-peach"></span>
+            <span class="s-dot dot-red"></span>
+            <span class="s-dot dot-purple"></span>
+            <span class="s-dot dot-peach-light"></span>
+          </div>
+        </div>
+
+        <!-- Challenge Preview Card (From Screenshot 5) -->
+        <div class="ringing-challenge-preview-card">
+          <div class="preview-card-header">
+            <div class="card-left-info">
+              <div class="challenge-brain-box" id="ringing-game-icon">🧠</div>
+              <div>
+                <h4 class="preview-game-name" id="ringing-game-name">Sequence Memory</h4>
+                <span class="preview-game-adaptive" id="ringing-game-level">Adaptive Level 4</span>
+              </div>
+            </div>
+            <span class="steps-badge" id="ringing-steps-badge">6 STEPS</span>
+          </div>
+
+          <p class="preview-challenge-desc" id="ringing-challenge-desc">
+            Memorize and reproduce the 6-step light pattern correctly to disarm the audio siren completely.
+          </p>
+
+          <!-- Pattern Preview Mini Box -->
+          <div class="mini-pattern-preview-box">
+            <div class="pattern-status-row">
+              <span class="pattern-preview-label">PATTERN PREVIEW</span>
+              <span class="ready-cyan-tag"><span class="dot-cyan"></span> READY</span>
+            </div>
+            <div class="preview-squares-row">
+              <div class="sq-prev sq-1">1</div>
+              <div class="sq-prev sq-2 active-purple">2</div>
+              <div class="sq-prev sq-3">3</div>
+              <div class="sq-prev sq-4 active-cyan">4</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Big Start Challenge Button -->
+        <div class="ringing-action-row">
+          <button class="btn-gradient-start-challenge" id="btn-start-alarm-challenge">
+            <span class="btn-challenge-text">START CHALLENGE</span>
+            <span class="bolt-white">⚡</span>
+          </button>
+        </div>
+
+        <!-- Optional Standard Snooze/Dismiss (if Anti-Snooze is OFF) -->
+        <div class="standard-dismiss-row" id="standard-dismiss-row" style="display: none;">
+          <button class="btn-snooze-plain" id="btn-snooze-plain">Snooze (5m)</button>
+          <button class="btn-dismiss-plain" id="btn-dismiss-plain">Dismiss Alarm</button>
+        </div>
+
+        <!-- Emergency SOS Option (10-second hold) -->
+        <div class="emergency-sos-wrap">
+          <button type="button" class="btn-emergency-sos" id="btn-emergency-sos">
+            <span class="sos-tag">SOS</span>
+            <span class="sos-label">SOS / Call Roommate Buddy (Emergency)</span>
+          </button>
+          <p class="sos-caption">Requires 10-second hold. Sends wake confirmation ping to your dorm group.</p>
+          <div class="sos-hold-progress-track" id="sos-hold-track">
+            <div class="sos-hold-progress-fill" id="sos-hold-fill"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==============================================================
+           SCREEN 4: ACTIVE CHALLENGE GAMEPLAY (Screenshot 3 Reference)
+           ============================================================== -->
+      <div class="gameplay-fullscreen-overlay" id="screen-game-playing">
+        <!-- Top Siren Status Banner -->
+        <div class="game-top-siren-bar">
+          <div class="siren-muffled-pill">
+            <span class="dot-coral-pulse"></span>
+            <span>SIREN: 65% MUFFLED</span>
+          </div>
+          <div class="mini-eq-bars">
+            <span class="mini-bar b-cyan"></span>
+            <span class="mini-bar b-pink"></span>
+            <span class="mini-bar b-cyan"></span>
+            <span class="mini-bar b-magenta"></span>
+          </div>
+        </div>
+
+        <!-- Top HUD Telemetry Row (From Screenshot 3) -->
+        <div class="game-hud-row">
+          <div class="hud-pill">
+            <span class="hud-icon">🌀</span>
+            <span class="hud-text" id="game-hud-mission-lvl">MISSION LVL 03</span>
+          </div>
+          <div class="hud-pill timer-pill">
+            <span class="hud-icon">⏱</span>
+            <span class="hud-text" id="game-hud-timer">ESCAPE IN 15.0s</span>
+          </div>
+          <div class="hud-pill">
+            <span class="hud-icon">🪢</span>
+            <span class="hud-text" id="game-hud-synapse">SYNAPSE 82%</span>
+          </div>
+        </div>
+
+        <!-- Game Mission Header -->
+        <div class="game-mission-header">
+          <div class="portal-beta-badge" id="game-portal-badge">
+            <span class="radar-ico">((•))</span>
+            <span>PORTAL BETA (NORTH-EAST)</span>
+          </div>
+          <h2 class="game-board-title" id="game-board-title">
+            Maze Escape <span class="swirl-cyan">🌀</span>
+          </h2>
+          <p class="game-board-subtitle" id="game-board-subtitle">
+            Guide the neural spark through the labyrinth to the awakening portal to disarm siren.
+          </p>
+        </div>
+
+        <!-- Game Play Area: Dynamically Hosts Current Active Game -->
+        <div class="game-canvas-container" id="game-canvas-container">
+
+          <!-- --------------------------------------------------------
+               GAME 1: MAZE ESCAPE (Screenshot 3 Reference)
+               -------------------------------------------------------- -->
+          <div class="game-mode-panel active" id="panel-game-maze">
+            <div class="maze-board-outer">
+              <div class="maze-grid-matrix" id="maze-grid-matrix">
+                <!-- 6x7 Cells dynamically created by JS -->
+              </div>
+            </div>
+
+            <!-- Controls Guide -->
+            <div class="maze-controls-hint">
+              <span class="touch-ico">↻</span>
+              <span>Swipe maze or tap tactile D-Pad</span>
+            </div>
+
+            <!-- Tactile D-Pad (Screenshot 3 Reference) -->
+            <div class="tactile-dpad-wrapper">
+              <div class="dpad-row">
+                <button type="button" class="btn-dpad dpad-up" id="btn-dpad-up" title="Up">▲</button>
+              </div>
+              <div class="dpad-row middle-row">
+                <button type="button" class="btn-dpad dpad-left" id="btn-dpad-left" title="Left">◀</button>
+                <div class="dpad-center-dot">●</div>
+                <button type="button" class="btn-dpad dpad-right" id="btn-dpad-right" title="Right">▶</button>
+              </div>
+              <div class="dpad-row">
+                <button type="button" class="btn-dpad dpad-down" id="btn-dpad-down" title="Down">▼</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- --------------------------------------------------------
+               GAME 2: SEQUENCE MEMORY (Tile Sequence)
+               -------------------------------------------------------- -->
+          <div class="game-mode-panel" id="panel-game-sequence">
+            <div class="sequence-grid-board" id="sequence-grid-board">
+              <!-- 4 Interactive High-Tech Pads -->
+              <button type="button" class="seq-neo-pad pad-0" data-pad="0"><span class="pad-num">1</span></button>
+              <button type="button" class="seq-neo-pad pad-1" data-pad="1"><span class="pad-num">2</span></button>
+              <button type="button" class="seq-neo-pad pad-2" data-pad="2"><span class="pad-num">3</span></button>
+              <button type="button" class="seq-neo-pad pad-3" data-pad="3"><span class="pad-num">4</span></button>
+            </div>
+            <div class="game-counter-row">
+              <span class="counter-label">Sequence Matched:</span>
+              <span class="counter-digits" id="seq-steps-count">0 / 5</span>
+            </div>
+          </div>
+
+          <!-- --------------------------------------------------------
+               GAME 3: CARD MATCH (4x4 Neural Pairs)
+               -------------------------------------------------------- -->
+          <div class="game-mode-panel" id="panel-game-cards">
+            <div class="card-grid-4x4" id="cards-grid-matrix">
+              <!-- 16 cards dynamically populated by JS -->
+            </div>
+            <div class="game-counter-row">
+              <span class="counter-label">Pairs Discovered:</span>
+              <span class="counter-digits" id="cards-pairs-count">0 / 6</span>
+            </div>
+          </div>
+
+          <!-- --------------------------------------------------------
+               GAME 4: PATTERN RECALL (Matrix Grid)
+               -------------------------------------------------------- -->
+          <div class="game-mode-panel" id="panel-game-pattern">
+            <div class="pattern-matrix-board" id="pattern-matrix-board">
+              <!-- 4x4 or 3x3 tiles populated by JS -->
+            </div>
+            <div class="game-counter-row">
+              <span class="counter-label">Pattern Nodes:</span>
+              <span class="counter-digits" id="pattern-nodes-count">0 / 4</span>
+            </div>
+          </div>
+
+          <!-- --------------------------------------------------------
+               GAME 5: COLOR MEMORY (Harmonic Simon Sequence)
+               -------------------------------------------------------- -->
+          <div class="game-mode-panel" id="panel-game-color">
+            <div class="color-chime-circle" id="color-chime-board">
+              <button type="button" class="color-slice slice-red" data-color="0"><span>RED</span></button>
+              <button type="button" class="color-slice slice-blue" data-color="1"><span>BLUE</span></button>
+              <button type="button" class="color-slice slice-green" data-color="2"><span>GREEN</span></button>
+              <button type="button" class="color-slice slice-yellow" data-color="3"><span>YELLOW</span></button>
+              <button type="button" class="color-slice slice-purple" data-color="4"><span>VIOLET</span></button>
+              <div class="color-center-hub">
+                <span class="hub-icon">🎵</span>
+                <span class="hub-text" id="color-turn-text">Listen</span>
+              </div>
+            </div>
+            <div class="game-counter-row">
+              <span class="counter-label">Harmonic Step:</span>
+              <span class="counter-digits" id="color-step-count">0 / 4</span>
+            </div>
+          </div>
+
+        </div><!-- End game-canvas-container -->
+
+        <!-- Game Toast / Feedback Overlay -->
+        <div class="game-toast-alert" id="game-toast-alert">
+          <span class="toast-text" id="game-toast-text">Watch carefully...</span>
+        </div>
+
+        <!-- Bottom Game Controls (From Screenshot 3) -->
+        <div class="game-bottom-controls-row">
+          <button type="button" class="btn-game-reset" id="btn-game-reset">
+            <span class="reset-ico">↺</span>
+            <span id="game-reset-label">RESET (1 LEFT)</span>
+          </button>
+          <button type="button" class="btn-game-snooze-penalty" id="btn-game-snooze-penalty">
+            <span class="clock-ico">⏱</span>
+            <span>SNOOZE (-50 XP)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ==============================================================
+           SCREEN 5: RESULT & RATING SCREEN (Section 10 Reference)
+           ============================================================== -->
+      <div class="result-screen-overlay" id="screen-game-result">
+        <!-- Confetti Canvas -->
+        <canvas id="confetti-canvas" class="confetti-canvas"></canvas>
+
+        <div class="result-modal-card">
+          <div class="result-trophy-halo">
+            <span class="trophy-big-ico">🎉</span>
+          </div>
+
+          <h2 class="result-congrats-title">Challenge Complete!</h2>
+          <p class="result-congrats-sub">Audio siren disarmed. Your neural synapses are fully awake.</p>
+
+          <!-- Result Stat Grid -->
+          <div class="result-metrics-grid">
+            <div class="res-stat-card">
+              <span class="res-stat-label">TIME</span>
+              <strong class="res-stat-val" id="res-time-val">12.8s</strong>
+              <span class="res-stat-sub">Wake-Up</span>
+            </div>
+            <div class="res-stat-card">
+              <span class="res-stat-label">SCORE</span>
+              <strong class="res-stat-val" id="res-score-val">950</strong>
+              <span class="res-stat-sub">XP &amp; Accuracy</span>
+            </div>
+            <div class="res-stat-card">
+              <span class="res-stat-label">LEVEL</span>
+              <strong class="res-stat-val" id="res-level-val">LVL 3</strong>
+              <span class="res-stat-sub">Adaptive</span>
+            </div>
+            <div class="res-stat-card">
+              <span class="res-stat-label">STREAK</span>
+              <strong class="res-stat-val" id="res-streak-val">7d 🔥</strong>
+              <span class="res-stat-sub">Top 5%</span>
+            </div>
+          </div>
+
+          <!-- Personal Best Banner -->
+          <div class="personal-best-banner" id="res-personal-best-banner">
+            <span class="star-badge-ico">🌟</span>
+            <span id="res-pb-text">New Personal Best for this challenge!</span>
+          </div>
+
+          <!-- 1-5 Star Game Rating Section (Requirement 10) -->
+          <div class="result-rating-box">
+            <h4 class="rating-box-title">How was this challenge?</h4>
+            <div class="star-rating-row" id="star-rating-row">
+              <button type="button" class="star-glyph active" data-star="1">★</button>
+              <button type="button" class="star-glyph active" data-star="2">★</button>
+              <button type="button" class="star-glyph active" data-star="3">★</button>
+              <button type="button" class="star-glyph active" data-star="4">★</button>
+              <button type="button" class="star-glyph active" data-star="5">★</button>
+            </div>
+            <div class="rating-feedback-quote" id="rating-feedback-quote">
+              ⭐ Loved it! Felt energizing and fun
+            </div>
+
+            <!-- Quick Tag Chips -->
+            <div class="rating-tag-chips-row">
+              <button type="button" class="res-chip active" data-tag="Quick & Fun">⚡ Quick &amp; Fun</button>
+              <button type="button" class="res-chip" data-tag="Woke me up">🧠 Woke me up</button>
+              <button type="button" class="res-chip" data-tag="Just right">🎯 Just right</button>
+              <button type="button" class="res-chip" data-tag="A bit tough">😴 A bit tough</button>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="result-actions-row">
+            <button type="button" class="btn-res-submit" id="btn-submit-rating">Submit Rating</button>
+            <button type="button" class="btn-res-continue" id="btn-continue-result">Continue ➔</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- End mobile-device-frame -->
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
